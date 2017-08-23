@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta chartset="utf-8">
+	<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+	<script src="https://unpkg.com/vue"></script>
+	<style type="text/css" media="screen">
+		body{
+			padding: 30px 0px;
+		}
+		.ma-b-10{
+			margin-bottom: 10px;
+		}
+	</style>
+</head>
+<body>
+	<div class="container" id="app">
+		<h1>尝试显示<code>text/html</code>类型的数据</h1>
+		<div class="input-group ma-b-10">
+		  <span class="input-group-addon" id="basic-addon3">在这里粘贴Excel表格</span>
+		  <input ref="input" type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3">
+		</div>
+		<div class="card ma-b-10">
+			<div class="card-body">
+				<h4 class="card-title">
+					尝试使用<code>text/html</code>类型数据
+				</h4>
+				<h6 class="card-subtitle mb-2 text-muted">
+					如果可以获取到数据，将会在这里显示结果
+				</h6>
+				<template v-if="tempData">
+					<div class="form-group">
+						<label for="exampleFormControlTextarea1">数据源码</label>
+						<textarea
+							class="form-control"
+							id="exampleFormControlTextarea1"
+							rows="3"
+							v-model="tempData">
+						</textarea>
+					</div>
+					<div ref="tempGroup" v-html="tempData"></div>    
+				</template>
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		var vm = new Vue({
+			el: '#app',
+			data: {
+				tempData: ''
+			},
+			mounted: function () {
+				var _this = this
+				this.$refs.input.addEventListener("paste", function (e){
+					if ( !(e.clipboardData && e.clipboardData.items) ) {
+						return ;
+					}
+					if (e.clipboardData.items[1].type === 'text/html') {
+						e.clipboardData.items[1].getAsString(function(str){
+							_this.tempData = str
+						})    
+					}
+				});
+			}
+		})
+	</script>
+</body>
+</html>

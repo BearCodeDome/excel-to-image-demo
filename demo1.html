@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta chartset="utf-8">
+	<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+	<script src="https://unpkg.com/vue"></script>
+	<style type="text/css" media="screen">
+		body{
+			padding: 30px 0px;
+		}
+		.ma-b-10{
+			margin-bottom: 10px;
+		}
+	</style>
+</head>
+<body>
+	<div class="container" id="app">
+		<h1>检查值类型</h1>
+		<div class="input-group ma-b-10">
+		  <span class="input-group-addon" id="basic-addon3">在这里粘贴Excel表格</span>
+		  <input ref="input" type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3">
+		</div>
+		<p><small>结果在控制台打印</small></p>
+	</div>
+	<script type="text/javascript">
+		var vm = new Vue({
+			el: '#app',
+			mounted: function () {
+				this.$refs.input.addEventListener("paste", function (e){
+					if ( !(e.clipboardData && e.clipboardData.items) ) {
+						return ;
+					}
+					for (var i = 0; i < e.clipboardData.items.length; i++) {
+						console.log(e.clipboardData.items[i].type);
+					}
+				});
+			}
+		})
+	</script>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<meta chartset="utf-8">
+	<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+	<script src="https://unpkg.com/vue"></script>
+	<script src="https://cdn.bootcss.com/html2canvas/0.5.0-beta4/html2canvas.min.js"></script>
+	<style type="text/css" media="screen">
+		body{
+			padding: 30px 0px;
+		}
+		.ma-b-10{
+			margin-bottom: 10px;
+		}
+	</style>
+</head>
+<body>
+	<div class="container" id="app">
+		<h1>使用<code>text/html</code>类型的数据生成图片</h1>
+		<div class="input-group ma-b-10">
+		  <span class="input-group-addon" id="basic-addon3">在这里粘贴Excel表格</span>
+		  <input ref="input" type="text" class="form-control" id="basic-url" aria-describedby="basic-addon3">
+		</div>
+		<div class="card ma-b-10">
+			<div class="card-body">
+				<h4 class="card-title">
+					尝试使用<code>text/html</code>类型数据
+				</h4>
+				<h6 class="card-subtitle mb-2 text-muted">
+					如果可以获取到数据，将会在这里显示结果
+				</h6>
+				<template v-if="tempData">
+					<div class="form-group">
+						<label for="tempData">数据源码</label>
+						<textarea
+							class="form-control"
+							id="tempData"
+							rows="3"
+							v-model="tempData">
+						</textarea>
+					</div>
+					<div ref="tempGroup" v-html="tempData"></div>    
+				</template>
+			</div>
+		</div>
+		<div class="card ma-b-10">
+			<div class="card-body">
+				<h4 class="card-title">
+					尝试使用<code>text/html</code>类型数据生成图片
+				</h4>
+				<h6 class="card-subtitle mb-2 text-muted">
+					如果可以生成图片，<code>canvas</code>将会显示在这里
+				</h6>
+				<div ref="canvasGroup"></div>
+			</div>
+		</div>
+		<div class="card ma-b-10">
+			<div class="card-body">
+				<h4 class="card-title">
+					获得<code>base64数据</code>
+				</h4>
+				<textarea
+					v-if="base64"
+					class="form-control"
+					id="base64"
+					rows="3"
+					v-model="base64">
+				</textarea>
+			</div>
+		</div>
+		<div class="card ma-b-10">
+			<div class="card-body">
+				<h4 class="card-title">
+					生成<code>img</code>
+				</h4>
+				<img v-if="base64" :src="base64">
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+		var vm = new Vue({
+			el: '#app',
+			data: {
+				tempData: '',
+				base64: ''
+			},
+			mounted: function () {
+				var _this = this
+				this.$refs.input.addEventListener("paste", function (e){
+					if ( !(e.clipboardData && e.clipboardData.items) ) {
+						return ;
+					}
+					if (e.clipboardData.items[1].type === 'text/html') {
+						e.clipboardData.items[1].getAsString(function(str){
+							_this.tempData = str
+							Vue.nextTick(function(){
+								html2canvas(_this.$refs.tempGroup, {
+									onrendered: function(canvas) {
+										_this.$refs.canvasGroup.appendChild(canvas)
+										_this.base64 = canvas.toDataURL()
+									}
+								})    
+							})
+						})    
+					}
+
+				});
+			}
+		})
+	</script>
+</body>
+</html>
